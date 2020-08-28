@@ -23,5 +23,19 @@ spring:
       connection-init-sql: SET NAMES utf8mb4;
       max-lifetime: 60000
 
+mybatis:
+  mapperLocations: classpath:mappings/**/*.xml
+  #typeAliasesPackage:
+  configLocation: classpath:mybatis-config.xml
+  #typeAliasesSuperType:
+  #mapper-locations: classpath:mapping/*.xml
+  #type-aliases-package: com.winter.model
+
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
 
 
