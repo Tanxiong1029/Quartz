@@ -20,8 +20,8 @@ public class QuartzConfig {
     @Autowired
     private JobFactory jobFactory;
 
-    @Bean
-    public SchedulerFactoryBean initSchedulerFactoryBean() {
+    @Bean(name = "SchedulerFactory")
+    public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean factory = null;
         try {
             //获取配置属性
@@ -48,7 +48,14 @@ public class QuartzConfig {
      * 通过schedulerFactoryBean获取Scheduler的实例
      */
     @Bean(name = "scheduler")
-    public Scheduler getScheduler()  {
-        return initSchedulerFactoryBean().getScheduler();
+    public Scheduler scheduler()  {
+        Scheduler scheduler=null;
+        try {
+            scheduler= schedulerFactoryBean().getScheduler();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return scheduler;
     }
 }

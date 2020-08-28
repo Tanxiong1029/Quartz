@@ -27,7 +27,7 @@
         job_status, create_time)
         values (#{clazz,jdbcType=VARCHAR}, #{jobName,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR},
         #{cronExp,jdbcType=VARCHAR}, #{param,jdbcType=VARCHAR}, #{descInfo,jdbcType=VARCHAR},
-        #{jobStatus,jdbcType=CHAR},now())
+        0,now())
     </insert>
 
     <update id="update" parameterType="com.tx.quartz.domain.JobEntity">
