@@ -14,7 +14,7 @@
     </resultMap>
 
     <delete id="delete" parameterType="java.lang.Integer">
-    update  TASK_JOB set job_status='1'
+    delete from TASK_JOB
     where id = #{id,jdbcType=INTEGER}
   </delete>
 
@@ -27,20 +27,39 @@
         job_status, create_time)
         values (#{clazz,jdbcType=VARCHAR}, #{jobName,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR},
         #{cronExp,jdbcType=VARCHAR}, #{param,jdbcType=VARCHAR}, #{descInfo,jdbcType=VARCHAR},
-        0,now())
+        #{jobStatus,jdbcType=CHAR},now())
     </insert>
 
     <update id="update" parameterType="com.tx.quartz.domain.JobEntity">
-    update TASK_JOB
-    set clazz = #{clazz,jdbcType=VARCHAR},
-      job_name = #{jobName,jdbcType=VARCHAR},
-      group_name = #{groupName,jdbcType=VARCHAR},
-      cron_exp = #{cronExp,jdbcType=VARCHAR},
-      param = #{param,jdbcType=VARCHAR},
-      desc_info = #{descInfo,jdbcType=VARCHAR},
-      job_status = #{jobStatus,jdbcType=CHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+        update TASK_JOB
+        <set>
+            <if test="null!=clazz">
+                clazz = #{clazz,jdbcType=VARCHAR},
+            </if>
+            <if test="null!=jobName">
+                job_name = #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="null!=groupName">
+                group_name = #{groupName,jdbcType=VARCHAR},
+            </if>
+            <if test="null!=cronExp">
+                cron_exp = #{cronExp,jdbcType=VARCHAR},
+            </if>
+            <if test="null!=param">
+                param = #{param,jdbcType=VARCHAR},
+            </if>
+            <if test="null!=descInfo">
+                desc_info = #{descInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="null!=jobStatus">
+                job_status = #{jobStatus,jdbcType=CHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="get" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from TASK_JOB where id = #{id,jdbcType=INTEGER}
+    </select>
 
 </mapper>

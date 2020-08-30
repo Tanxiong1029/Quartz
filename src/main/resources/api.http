@@ -1,0 +1,33 @@
+### 添加任务
+GET http://localhost:8081/addJob
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/x-www-form-urlencoded
+
+### 停止任务
+GET http://localhost:8081/stopJOb
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/x-www-form-urlencoded
+
+
+### 启动任务
+GET http://localhost:8081/resumeJob
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/x-www-form-urlencoded
+
+
+### 更新任务
+GET http://localhost:8081/updateJob
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/x-www-form-urlencoded
+
+### 删除任务
+GET http://localhost:8081/delJob
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/x-www-form-urlencoded
+
+###

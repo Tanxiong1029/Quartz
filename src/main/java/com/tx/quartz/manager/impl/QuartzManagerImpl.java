@@ -1,24 +1,21 @@
 package com.tx.quartz.manager.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.tx.quartz.db.service.JobService;
 import com.tx.quartz.domain.JobEntity;
+import com.tx.quartz.service.ScheduleJobService;
 import com.tx.quartz.manager.QuartzManager;
-import org.quartz.*;
+import com.tx.quartz.msg.QuartzCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.Map;
 
 @Service
 public class QuartzManagerImpl implements QuartzManager {
 
     @Autowired
-    private Scheduler scheduler;
+    private ScheduleJobService scheduleJobService;
 
     @Autowired
     private JobService jobService;
@@ -27,72 +24,51 @@ public class QuartzManagerImpl implements QuartzManager {
 
     @Override
     public boolean addJob(JobEntity entity) {
+        //TODO 这里可以根据业务扩展,进行任务是否重复等等处理
         boolean flag=true;
-        try {
-            //构建Job信息
-            JobDetail jobDetail = JobBuilder.newJob((Class<? extends Job>) Class.forName(entity.getClazz()))
-                    .withIdentity(entity.getJobName(), entity.getGroupName())
-                    .withDescription(entity.getDescInfo())
-                    .build();
-
-            //构建cron表达式
-            CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(entity.getCronExp());
-
-            //构建Trigger
-            CronTrigger cronTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(entity.getJobName(), entity.getGroupName())
-                    .withSchedule(cronSchedule)
-                    .build();
-
-            //Job参数
-            if(StringUtils.hasText(entity.getParam())){
-                Map<String, Object> map = JSON.parseObject(entity.getParam(), new TypeReference<Map<String, Object>>() {
-                });
-                cronTrigger.getJobDataMap().putAll(map);
-            }
-            scheduler.scheduleJob(jobDetail,cronTrigger);
-            //启动调度器
-            scheduler.start();
-
-            //将任务写入数据库
-            //jobService.insert(entity);
-        } catch (ClassNotFoundException e) {
-            flag=false;
-            logger.error("Job class not find ==>{}",e);
-        }catch (SchedulerException e){
-            flag=false;
-            logger.error("build scheduleJob error by jobDerail and trigger ==>{}",e);
+        jobService.insert(entity);
+        if(QuartzCode.Job.START_JOB_STATUS.equals(entity.getJobStatus())){
+            flag = scheduleJobService.schedulerAddJob(entity);
         }
         return flag;
     }
 
     @Override
-    public void pauseJob(JobEntity entity) {
+    public boolean pauseJob(JobEntity entity) {
+        JobEntity dbJob = jobService.get(entity);
+        boolean b = scheduleJobService.schedulerPauseJob(dbJob);
+        if(b){
+            entity.setJobStatus(QuartzCode.Job.STOP_JOB_STATUS);
+        }
+        return b;
+    }
+
+    @Override
+    public boolean resumeJob(JobEntity entity) {
+        JobEntity dbJob = jobService.get(entity);
+        boolean b = scheduleJobService.schedulerResumeJob(dbJob);
+        if(b){
+            entity.setJobStatus(QuartzCode.Job.STOP_JOB_STATUS);
+        }
+        return b;
 
     }
 
     @Override
-    public void resumeJob(JobEntity entity) {
-
+    public boolean updateJob(JobEntity entity) {
+        jobService.update(entity);
+        JobEntity dbJob = jobService.get(entity);
+        return scheduleJobService.schedulerUpdateJob(dbJob);
     }
 
     @Override
-    public void updateJob(JobEntity entity) {
-
+    public boolean deleteJob(JobEntity entity) {
+        JobEntity dbJob = jobService.get(entity);
+        boolean b = scheduleJobService.schedulerDeleteJob(dbJob);
+        if(b){
+            jobService.del(entity.getId());
+        }
+        return b;
     }
 
-    @Override
-    public void deleteJob(JobEntity entity) {
-
-    }
-
-    @Override
-    public void startAllJobs() {
-
-    }
-
-    @Override
-    public void shutdownAllJobs() {
-
-    }
 }

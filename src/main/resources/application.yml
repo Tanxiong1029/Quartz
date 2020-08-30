@@ -10,32 +10,30 @@ server:
 
 spring:
   datasource:
-    hikari:
-      #url
-      jdbc-url: jdbc:mysql://62.234.153.162:13306/spring_quartz?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&noAccessToProcedureBodies=true
+    url: jdbc:mysql://62.234.153.162:13306/spring_quartz?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&noAccessToProcedureBodies=true
       #用户名
-      username: root
+    username: root
       #密码
-      password: root
+    password: root
       #数据库驱动
-      driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
       #存入emoji表情符号的配置
-      connection-init-sql: SET NAMES utf8mb4;
-      max-lifetime: 60000
+    connection-init-sql: SET NAMES utf8mb4;
+    max-lifetime: 60000
 
 mybatis:
-  mapperLocations: classpath:mappings/**/*.xml
+  mapper-locations: classpath:mappings/**/*.xml
   #typeAliasesPackage:
-  configLocation: classpath:mybatis-config.xml
+  config-location: classpath:mybatis-config.xml
   #typeAliasesSuperType:
   #mapper-locations: classpath:mapping/*.xml
   #type-aliases-package: com.winter.model
 
 #pagehelper分页插件
 pagehelper:
-    helperDialect: mysql
-    reasonable: true
-    supportMethodsArguments: true
-    params: count=countSql
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
 
 

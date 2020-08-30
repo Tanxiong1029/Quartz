@@ -12,41 +12,33 @@ public interface QuartzManager {
      */
     boolean addJob(JobEntity entity);
 
+
     /**
      * 暂停任务
      *
      * @param entity
      */
-    void pauseJob(JobEntity entity);
+    boolean pauseJob(JobEntity entity);
 
     /**
      * 恢复任务
      *
      * @param entity
      */
-    void resumeJob(JobEntity entity);
+    boolean resumeJob(JobEntity entity);
 
     /**
      * 更新任务
      *
      * @param entity
      */
-    void updateJob(JobEntity entity);
+    boolean updateJob(JobEntity entity);
 
     /**
      * 删除任务
      *
      * @param entity
      */
-    void deleteJob(JobEntity entity);
+    boolean deleteJob(JobEntity entity);
 
-    /**
-     * 启动所有任务
-     */
-    void startAllJobs();
-
-    /**
-     * 关闭所有任务
-     */
-    void shutdownAllJobs();
 }
