@@ -1,0 +1,19 @@
+Scheduler:调度器
+Job:任务接口，所有的被调度的任务都要实现这一接口
+JobDetail:任务详情，定义调度任务
+Trigger:触发器，定义了给定调度任务执行时间表组件
+JobBuilder:用于定义或构建JobDetail实例
+TriggerBuilder:用于定义或构建Trigger实例
+
+在Quartz中Job和Trigger是相互独立的，Quartz中Job是无状态的，有状态的是Trigger
+
+
+每次当Scheduler执行Job时，在调用其execute(…)方法之前会创建该类的一个新的实例，因此在Job类中，不应该定义有状态的数据属性
+
+Job的状态和并发性:
+    @DisallowConcurrentExecution 表示不能同时执行给定Job类的多个实例
+    @PersistJobDataAfterExecution 告诉Quartz在execute()方法成功完成后（不抛出异常）更新JobDetail的JobDataMap的存储副本数据，
+使得该Job（即JobDetail）在下一次执行的时候，JobDataMap中是更新后的数据，而不是更新前的旧数据，如果使用了该注解，最好是同时使用@DisallowConcurrentExecution注解
+
+Job的Durability(持久性)和RequestsRecovery(恢复性)属性可以通过JobDetail对象进行设置
+
